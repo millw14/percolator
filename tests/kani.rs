@@ -2411,12 +2411,12 @@ fn withdraw_im_check_blocks_when_equity_after_withdraw_below_im() {
 
     let result = engine.withdraw(user_idx, withdraw, 0, 1_000_000);
 
-    // Withdraw fails if equity < IM (pre-check) OR equity <= MM (post-check)
-    if equity_after >= im_required && equity_after > mm_required {
-        assert!(result.is_ok(), "withdraw must succeed when equity >= IM and > MM");
-    }
-    if equity_after < mm_required {
-        assert!(result.is_err(), "withdraw must fail when equity < MM");
+    // Withdrawal is risk-increasing, so equity after must meet IM (not just MM).
+    // IM >= MM, so equity >= IM implies equity > MM.
+    if equity_after >= im_required {
+        assert!(result.is_ok(), "withdraw must succeed when equity >= IM");
+    } else {
+        assert!(result.is_err(), "withdraw must fail when equity < IM");
     }
 
     // Non-vacuity: conservative case (high capital, small position, small withdraw) succeeds
