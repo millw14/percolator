@@ -3378,7 +3378,7 @@ fn test_execute_trade_sets_current_slot_and_resets_warmup_start() {
     params.trading_fee_bps = 0;
     params.maintenance_fee_per_slot = U128::new(0);
     params.maintenance_margin_bps = 0;
-    params.initial_margin_bps = 0;
+    params.initial_margin_bps = 1;
     params.max_crank_staleness_slots = u64::MAX;
     params.max_accounts = 64;
 
@@ -3386,10 +3386,10 @@ fn test_execute_trade_sets_current_slot_and_resets_warmup_start() {
 
     // Create LP and user with capital
     let lp_idx = engine.add_lp([1u8; 32], [0u8; 32], 0).unwrap();
-    engine.deposit(lp_idx, 1_000_000, 0).unwrap();
+    engine.deposit(lp_idx, 100_000_000_000, 0).unwrap();
 
     let user_idx = engine.add_user(0).unwrap();
-    engine.deposit(user_idx, 1_000_000, 0).unwrap();
+    engine.deposit(user_idx, 100_000_000_000, 0).unwrap();
 
     // Execute trade at now_slot = 100
     let now_slot = 100u64;
@@ -3562,7 +3562,7 @@ fn params_for_inline_tests() -> RiskParams {
     RiskParams {
         warmup_period_slots: 1000,
         maintenance_margin_bps: 0,
-        initial_margin_bps: 0,
+        initial_margin_bps: 1,
         trading_fee_bps: 0,
         max_accounts: MAX_ACCOUNTS as u64,
         new_account_fee: U128::new(0),
@@ -4138,8 +4138,8 @@ fn test_lp_position_flip_margin_check() {
 fn test_micro_trade_fee_not_zero() {
     let mut params = default_params();
     params.trading_fee_bps = 10; // 0.1% fee
-    params.maintenance_margin_bps = 100; // 1% for easy math
-    params.initial_margin_bps = 100;
+    params.maintenance_margin_bps = 100;
+    params.initial_margin_bps = 200;
     params.warmup_period_slots = 0;
     params.max_crank_staleness_slots = u64::MAX;
 
@@ -4181,7 +4181,7 @@ fn test_zero_fee_bps_means_no_fee() {
     let mut params = default_params();
     params.trading_fee_bps = 0; // Fee-free trading
     params.maintenance_margin_bps = 100;
-    params.initial_margin_bps = 100;
+    params.initial_margin_bps = 200;
     params.warmup_period_slots = 0;
     params.max_crank_staleness_slots = u64::MAX;
 
@@ -4223,7 +4223,7 @@ fn test_warmup_resets_when_mark_increases_pnl() {
     params.warmup_period_slots = 100;
     params.trading_fee_bps = 0;
     params.maintenance_margin_bps = 100;
-    params.initial_margin_bps = 100;
+    params.initial_margin_bps = 200;
     params.max_crank_staleness_slots = u64::MAX;
 
     let mut engine = Box::new(RiskEngine::new(params));

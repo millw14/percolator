@@ -646,6 +646,10 @@ impl RiskEngine {
     /// WARNING: This allocates ~6MB on the stack at MAX_ACCOUNTS=4096.
     /// For Solana BPF programs, use `init_in_place` instead.
     pub fn new(params: RiskParams) -> Self {
+        assert!(
+            params.maintenance_margin_bps < params.initial_margin_bps,
+            "maintenance_margin_bps must be strictly less than initial_margin_bps"
+        );
         let mut engine = Self {
             vault: U128::ZERO,
             insurance_fund: InsuranceFund {
@@ -699,6 +703,10 @@ impl RiskEngine {
     /// This is the correct way to initialize RiskEngine in Solana BPF programs
     /// where stack space is limited to 4KB.
     pub fn init_in_place(&mut self, params: RiskParams) {
+        assert!(
+            params.maintenance_margin_bps < params.initial_margin_bps,
+            "maintenance_margin_bps must be strictly less than initial_margin_bps"
+        );
         // Set params (non-zero field)
         self.params = params;
         self.max_crank_staleness_slots = params.max_crank_staleness_slots;
