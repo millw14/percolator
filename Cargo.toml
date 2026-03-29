@@ -15,6 +15,7 @@ path = "src/percolator.rs"
 proptest = "1.4"
 
 [features]
+ak_dual_run = []
 default = []
 test = []  # Use MAX_ACCOUNTS=64 for tests
 fuzz = []  # Enable fuzzing tests
